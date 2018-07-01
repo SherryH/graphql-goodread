@@ -2,11 +2,12 @@
 
 // not sure why we are fetching the goodreads info into schema, just follow video first
 const fetch = require("node-fetch");
-const GOODREADS_API_KEY = require("./.config.js");
+const GOODREADS_API_KEY = require("./.config.js").GOODREADS_API_KEY;
 console.log("api key", GOODREADS_API_KEY);
 // https://www.goodreads.com/api/index#author.show
 // get info about an author by id
 fetch(
-  `https://www.goodreads.com/author/show.xml?id=4432&key=${GOODREADS_API_KEY}`,
-  () => {}
-);
+  `https://www.goodreads.com/author/show.xml?id=4432&key=${GOODREADS_API_KEY}`
+)
+  .then(res => res.text())
+  .then(xml => console.log(xml));
