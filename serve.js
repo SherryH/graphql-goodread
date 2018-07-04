@@ -1,13 +1,14 @@
 const express = require("express");
 const graphqlHTTP = require("express-graphql"); //GraphQL HTTP Server Middleware
-const { buildSchema } = require("graphql");
+// const { buildSchema } = require("graphql");
+const schema = require("./schema");
 const app = express();
 
-var schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`);
+// var schema = buildSchema(`
+//   type Query {
+//     hello: String
+//   }
+// `);
 
 app.use(
   "/graphql",
