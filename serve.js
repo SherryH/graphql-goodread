@@ -9,7 +9,7 @@ const app = express();
 //     hello: String
 //   }
 // `);
-
+console.log(schema);
 app.use(
   "/graphql",
   graphqlHTTP({

@@ -27,7 +27,13 @@ console.log("api key", GOODREADS_API_KEY);
 const AuthorType = new GraphQLObjectType({
   name: "AuthorType",
   fields: () => ({
-    name: GraphQLString
+    name: {
+      type: GraphQLString,
+      resolve: json => {
+        console.log(json.GoodreadsResponse.author);
+        return json.GoodreadsResponse.author[0].name[0];
+      }
+    }
   })
 });
 
@@ -38,12 +44,20 @@ const schema = new GraphQLSchema({
       //fields can be function or object
       author: {
         type: AuthorType, //authorType has a name field
-        args: { //input to query authorQuery(id:1234)
+        args: {
+          //input to query authorQuery(id:1234)
           id: {
-            type: GraphQLInt 
+            type: GraphQLInt
           }
         },
-        resolver: ()=>() //returns the output of the goodread author json data
+        resolve: (root, args) => {
+          console.log("author args", args.name);
+          return fetch(
+            `https://www.goodreads.com/author/show.xml?id=4432&key=${GOODREADS_API_KEY}`
+          )
+            .then(res => res.text())
+            .then(xml => parseString(xml)); // the output needs to match the AuthorType
+        } //returns the output of the goodread author json data
       }
     })
   })
