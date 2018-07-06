@@ -5,7 +5,8 @@ const {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLList
 } = require("graphql");
 const fetch = require("node-fetch");
 const util = require("util");
@@ -24,15 +25,26 @@ console.log("api key", GOODREADS_API_KEY);
 //   })
 //   .then(json => console.log(JSON.stringify(json)));
 
+const BookType = new GraphQLObjectType({
+  name: "BookType",
+  fields: () => ({
+    //get title
+    //isbn
+    //authors
+  })
+});
+
 const AuthorType = new GraphQLObjectType({
   name: "AuthorType",
   fields: () => ({
     name: {
       type: GraphQLString,
       resolve: json => {
-        console.log(json.GoodreadsResponse.author);
         return json.GoodreadsResponse.author[0].name[0];
       }
+    },
+    books: {
+      type: GraphQLList(BookType)
     }
   })
 });
@@ -51,9 +63,10 @@ const schema = new GraphQLSchema({
           }
         },
         resolve: (root, args) => {
-          console.log("author args", args.name);
           return fetch(
-            `https://www.goodreads.com/author/show.xml?id=4432&key=${GOODREADS_API_KEY}`
+            `https://www.goodreads.com/author/show.xml?id=${
+              args.id
+            }&key=${GOODREADS_API_KEY}`
           )
             .then(res => res.text())
             .then(xml => parseString(xml)); // the output needs to match the AuthorType
