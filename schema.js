@@ -31,6 +31,16 @@ const BookType = new GraphQLObjectType({
     //get title
     //isbn
     //authors
+    title: {
+      type: GraphQLString,
+      resolve: book[0].title[0]
+    },
+    isbn: {
+      type: GraphQLString
+    },
+    authors: {
+      type: GraphQLString
+    }
   })
 });
 
