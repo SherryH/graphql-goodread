@@ -10,6 +10,7 @@ const {
 } = require("graphql");
 const fetch = require("node-fetch");
 const util = require("util");
+const fs = require("fs");
 const GOODREADS_API_KEY = require("./.config.js").GOODREADS_API_KEY;
 var parseString = util.promisify(require("xml2js").parseString);
 
@@ -32,8 +33,8 @@ const BookType = new GraphQLObjectType({
     //isbn
     //authors
     title: {
-      type: GraphQLString,
-      resolve: book[0].title[0]
+      type: GraphQLString
+      // resolve: books.book[0].title[0]
     },
     isbn: {
       type: GraphQLString
@@ -53,8 +54,17 @@ const AuthorType = new GraphQLObjectType({
         return json.GoodreadsResponse.author[0].name[0];
       }
     },
-    books: {
-      type: GraphQLList(BookType)
+    book: {
+      type: new GraphQLList(BookType),
+      resolve: json => {
+        fs.writeFileSync(
+          "GoodRead.json",
+          JSON.stringify(json.GoodreadsResponse.author[0].books[0].book[0])
+        );
+        console.log(
+          JSON.stringify(json.GoodreadsResponse.author[0].books[0].book[0])
+        );
+      }
     }
   })
 });
