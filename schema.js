@@ -33,8 +33,11 @@ const BookType = new GraphQLObjectType({
     //isbn
     //authors
     title: {
-      type: GraphQLString
-      // resolve: books.book[0].title[0]
+      type: GraphQLString,
+      resolve: json => {
+        console.log("Booktype title", JSON.stringify(json));
+        return json.title[0];
+      }
     },
     isbn: {
       type: GraphQLString
@@ -54,16 +57,14 @@ const AuthorType = new GraphQLObjectType({
         return json.GoodreadsResponse.author[0].name[0];
       }
     },
-    book: {
+    books: {
       type: new GraphQLList(BookType),
       resolve: json => {
         fs.writeFileSync(
           "GoodRead.json",
-          JSON.stringify(json.GoodreadsResponse.author[0].books[0].book[0])
+          JSON.stringify(json.GoodreadsResponse.author[0].books[0].book)
         );
-        console.log(
-          JSON.stringify(json.GoodreadsResponse.author[0].books[0].book[0])
-        );
+        return json.GoodreadsResponse.author[0].books[0].book;
       }
     }
   })
